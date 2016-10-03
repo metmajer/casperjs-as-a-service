@@ -1,0 +1,30 @@
+{
+	"name": "casperjs-as-a-service",
+	"version": "0.1.0",
+	"description": "A CasperJS web service for scraping the web.",
+	"main": "casperjs-as-a-service.js",
+	"scripts": {
+		"start": "node casperjs-as-a-service.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/metmajer/casperjs-as-a-service.git"
+	},
+	"author": "Martin Etmajer",
+	"contributors": [{
+		"name": "Martin Etmajer",
+		"email": "martin@etmajer.com"
+	}],
+	"license": "MIT",
+	"homepage": "https://github.com/metmajer/casperjs-as-a-service/",
+	"bugs": "https://github.com/metmajer/casperjs-as-a-service/issues",
+	"dependencies": {
+		"body-parser": "*",
+		"express": "*",
+		"nodegit": "*",
+		"node-uuid": "*",
+		"synchronize": "*"
+	},
+	"categories": ["Testing", "Utilities"],
+	"private": true
+}
