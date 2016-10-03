@@ -5,6 +5,7 @@ A CasperJS web service for scraping the web.
 ## How to start the service?
 
 ```
+export HOSTPORT=36000
 docker run -p 127.0.0.1:$HOSTPORT:80 \
   metmajer/casperjs-as-a-service
 ```
@@ -12,7 +13,7 @@ docker run -p 127.0.0.1:$HOSTPORT:80 \
 ## How to issue jobs?
 
 ```
-curl -f -H "Content-Type: application/json" http://localhost/job \
+curl -f -H "Content-Type: application/json" http://127.0.0.1:$HOSTPORT/job \
   -d '{"source": "https://github.com/metmajer/casperjs-test.git", "branch": "master", "contextDir": "tests"}'
 ```
 
