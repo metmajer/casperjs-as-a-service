@@ -14,4 +14,4 @@ RUN npm install
 
 EXPOSE 80
 
-CMD sh -c redis-server && exec npm run start
+CMD ["./run.sh"]
