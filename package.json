@@ -1,6 +1,6 @@
 {
 	"name": "casperjs-as-a-service",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "A CasperJS web service for scraping the web.",
 	"main": "casperjs-as-a-service.js",
 	"scripts": {
@@ -22,8 +22,7 @@
 		"body-parser": "*",
 		"express": "*",
 		"nodegit": "*",
-		"node-uuid": "*",
-		"synchronize": "*"
+		"node-uuid": "*"
 	},
 	"categories": ["Testing", "Utilities"],
 	"private": true

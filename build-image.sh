@@ -1,7 +1,7 @@
 #!/bin/bash
 DOCKER_FILE=Dockerfile
 DOCKER_IMAGE_NAME=metmajer/casperjs-as-a-service
-DOCKER_IMAGE_TAG=0.1.1
+DOCKER_IMAGE_TAG=0.2.0
 
 echo "Building Docker image: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
 docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} -f ${DOCKER_FILE} .

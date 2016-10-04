@@ -3,12 +3,11 @@
 var express = require('express'),
     Git = require("nodegit"),
     parser = require('body-parser'),
-    spawnSync = require('child_process').spawnSync,
-    sync = require('synchronize'),
+    exec = require('child_process').exec,
     uuid = require('node-uuid');
 
-function buildCasperCmdArgs(config) {
-  var result = [];
+function buildCasperCmd(config) {
+  var result = ['casperjs'];
 
   if (config.mode) {
     result.push(config.mode);
@@ -18,7 +17,7 @@ function buildCasperCmdArgs(config) {
     }
   }
 
-  return result;
+  return result.join(' ');
 }
 
 function getConfig(data) {
@@ -46,37 +45,28 @@ function getConfig(data) {
 var app = express();
 
 app.post('/job', parser.json(), function(request, response) {
-  sync.fiber(function() {
-    var defer = sync.defer();
+  var config;
+  try {
+    config = getConfig(request.body);
+  } catch (e) {
+    response.status(500).send({ error: e });
+  }
 
-    var config;
-    try {
-      config = getConfig(request.body);
-    } catch (e) {
-      response.status(500).send({ error: e });
-    }
+  var config = getConfig(request.body);
+  console.log('Cloning ' + config.git.uri + ' into ' + config.git.targetDir);
 
-    var config = getConfig(request.body);
-    console.log('Cloning ' + config.git.uri + ' into ' + config.git.targetDir);
-
-    sync.await(
-      Git.Clone(config.git.uri, config.git.targetDir, { checkoutBranch: config.git.branch })
-        .then(function(repo) {
-          defer.apply(undefined, repo);
-        })
-    );
-
-    var casper = spawnSync('casperjs', buildCasperCmdArgs(config.casper));
-    if (casper.status == 0) {
-      process.stdout.write(casper.stdout);
-      response.status(200);
-    } else {
-      process.stderr.write(casper.stderr);
-      response.status(500).send({ error: casper.stderr });
-    }
-
-    response.end();
-  });
+  Git.Clone(config.git.uri, config.git.targetDir, { checkoutBranch: config.git.branch })
+    .then(function() {
+      exec(buildCasperCmd(config.casper), undefined, function(error, stdout, stderr) {
+        if (!error) {
+          process.stdout.write(stdout);
+          response.status(200).send();
+        } else {
+          process.stderr.write(stderr);
+          response.status(500).send({ error: stderr });
+        }
+      });
+    });
 });
 
 app.listen(80);
