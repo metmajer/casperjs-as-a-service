@@ -9,19 +9,27 @@ var express = require('express'),
 function buildCasperCmd(config) {
   var result = ['casperjs'];
 
+  if (config.options) {
+    result.push(config.options);
+  }
+
   if (config.mode) {
     result.push(config.mode);
+  }
 
-    if (config.mode == 'test') {
-      result.push(config.contextDir);
-    }
+  if (config.mode == 'test' && !config.script) {
+    result.push(config.contextDir);
+  }
+
+  if (config.script) {
+    result.push(config.contextDir + '/' + config.script);
   }
 
   return result.join(' ');
 }
 
 function getConfig(data) {
-  if (!data.git.uri) {
+  if (!data.git || !data.git.uri) {
     throw 'git.uri property required';
   }
 
@@ -35,8 +43,10 @@ function getConfig(data) {
   };
 
   result.casper = {
+    options: data.casper ? data.casper.options : '',
     mode: data.casper ? data.casper.mode : '',
-    contextDir: result.git.targetDir + '/' + result.git.contextDir
+    contextDir: result.git.targetDir + '/' + result.git.contextDir,
+    script: data.casper ? data.casper.script : undefined
   };
 
   return result;
@@ -57,14 +67,20 @@ app.post('/job', parser.json(), function(request, response) {
 
   Git.Clone(config.git.uri, config.git.targetDir, { checkoutBranch: config.git.branch })
     .then(function() {
-      exec(buildCasperCmd(config.casper), undefined, function(error, stdout, stderr) {
+      var cmd = buildCasperCmd(config.casper);
+      console.log('Executing ' + cmd);
+      exec(cmd, undefined, function(error, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+
         if (!error) {
-          process.stdout.write(stdout);
-          response.status(200).send();
+          response.status(200).send({ stdout: stdout });
         } else {
-          process.stderr.write(stderr);
-          response.status(500).send({ error: stderr });
+          response.status(500).send({ stderr: stderr });
         }
+
+        console.log('Removing directory ' + config.git.targetDir);
+        exec('rm -rf ' + (config.git.targetDir), undefined, undefined);
       });
     });
 });
