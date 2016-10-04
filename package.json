@@ -1,6 +1,6 @@
 {
 	"name": "casperjs-as-a-service",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A CasperJS web service for scraping the web.",
 	"main": "casperjs-as-a-service.js",
 	"scripts": {
